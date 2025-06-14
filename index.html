@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twoja Brama. Twoja Forteca.</title>
+    <link rel="icon" type="image/png" href="img/logo.png">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400&display=swap');
+
+        :root {
+            --background-color: #333333;
+            --text-color: #e0e0e0;
+            --primary-color: #007aff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+        
+        h1 { font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 700; line-height: 1.1; }
+        h2 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 600; line-height: 1.2; color: var(--primary-color); }
+        h3 { font-size: clamp(1.5rem, 4vw, 2.5rem); font-weight: 600; }
+        p { font-size: clamp(1rem, 2.5vw, 1.25rem); font-weight: 300; line-height: 1.7; color: #b0b0b0; max-width: 650px; }
+
+        #interactive-background {
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            z-index: -1;
+        }
+        
+        .scene {
+            position: relative; width: 100%; min-height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            text-align: center; padding: 5vw; overflow: hidden;
+        }
+
+        .content-wrapper {
+            max-width: 800px; display: flex; flex-direction: column;
+            align-items: center; gap: 1.5rem; position: relative; z-index: 2;
+        }
+
+        /* --- ZMODYFIKOWANA SEKCJA HERO --- */
+        .hero-container {
+            height: 300vh; 
+            position: relative;
+        }
+        .hero-sticky-content {
+            position: sticky; top: 0; height: 100vh; width: 100%;
+            display: flex; justify-content: center; align-items: center;
+            overflow: hidden;
+        }
+        .hero-background-layer {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('img/hero-background.jpeg');
+            background-size: cover; background-position: center;
+            opacity: 0;
+            z-index: 0;
+            filter: brightness(0.8);
+        }
+        .hero-logo {
+            width: clamp(250px, 35vw, 400px);
+            height: auto;
+            margin-top: 1.5rem; 
+        }
+        .hero-content {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+            padding: 2rem; 
+        }
+        .reveal-content {
+            opacity: 0; 
+        }
+
+        .cta-button {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-size: clamp(1rem, 2vw, 1.1rem);
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 1rem;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+        .cta-button:hover {
+            transform: scale(1.05);
+            background-color: #0056b3;
+        }
+
+        /* --- SEKCJA BRAMY --- */
+        #gate-wrapper {
+            height: 250vh;
+            position: relative;
+        }
+        .gate-pin-target {
+            height: 100vh;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        .gate-overlay-animation {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 2;
+        }
+        .gate-half {
+            position: absolute; top: 0;
+            width: 50.5vw; 
+            height: 100%;
+            background-image: url('img/gate-full.jpeg');
+            background-size: 200% 100%;
+        }
+        .gate-half.left { left: 0; background-position: left center; }
+        .gate-half.right { left: 50%; background-position: right center; }
+        
+        #gate-wrapper .security-bg {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1;
+        }
+
+        /* --- SEKCJE Z TŁAMI GRAFICZNYMI --- */
+        .background-scene::before {
+            content: ''; 
+            position: absolute; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%;
+            background-size: cover; 
+            background-position: center;
+            background-attachment: fixed;
+            z-index: 0; 
+            filter: brightness(0.6);
+            opacity: var(--bg-opacity, 0); 
+        }
+
+        .vulnerability-bg::before { background-image: url('img/concept-vulnerability.jpeg'); }
+        .security-bg::before { background-image: url('img/concept-security.jpeg'); }
+        .nfc-bg::before { background-image: url('img/concept-nfc-pairing.jpeg'); }
+        .app-bg::before { background-image: url('img/app-mockup.png'); filter: brightness(0.5); }
+        .lost-pilot-bg::before { background-image: url('img/concept-lost-reassured.jpeg'); }
+        .auto-open-bg::before { background-image: url('img/concept-auto-open.jpeg'); }
+        .peace-of-mind-bg::before { background-image: url('img/concept-peace-of-mind.jpeg'); }
+        .installers-bg::before { background-image: url('img/concept-installers.jpeg'); }
+
+        .background-scene .content-wrapper,
+        .reveal-content .content-wrapper {
+            background-color: rgba(10, 10, 10, 0.5); 
+            backdrop-filter: blur(8px);
+            padding: 2rem; 
+            border-radius: 15px;
+        }
+        
+        /* --- ANIMACJA SZYFROWANIA --- */
+        .encrypted-text-animation {
+            font-family: 'Roboto Mono', monospace;
+            color: var(--primary-color);
+            opacity: 0.6;
+            font-size: clamp(0.8rem, 2vw, 1rem);
+            word-break: break-all;
+            height: 60px;
+            margin-top: 1rem;
+            min-width: 80%;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="interactive-background"></canvas>
+    
+    <section class="hero-container">
+        <div class="hero-sticky-content">
+            <div class="hero-background-layer"></div>
+            <div class="hero-content intro-content">
+                <h1>Twoja Brama. Twoja Forteca.</h1>
+                <img src="img/logo.png" alt="Logo Firmy" class="hero-logo">
+            </div>
+            <div class="hero-content reveal-content">
+                <div class="content-wrapper">
+                    <h3>Zapomnij o starych pilotach</h3>
+                    <p>Odkryj system sterowania bramą, który łączy wysokie standardy bezpieczeństwa z niewiarygodną prostotą obsługi.</p>
+                    <button class="cta-button">Poznaj możliwości</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="scene background-scene vulnerability-bg">
+        <div class="content-wrapper">
+            <h3>Czy wiesz, jak łatwo skopiować zwykłego pilota?</h3>
+            <p>Większość standardowych systemów opiera się na prostym sygnale, który można łatwo "nagrać" i odtworzyć. To jak zostawić klucz pod wycieraczką.</p>
+        </div>
+    </section>
+    
+    <div id="gate-wrapper">
+        <div class="gate-pin-target">
+            <section class="scene background-scene security-bg">
+                <div class="content-wrapper">
+                    <h2>Szyfrowanie, którego nie da się złamać</h2>
+                    <p>Każde naciśnięcie przycisku wysyła unikalny, jednorazowy i w pełni zaszyfrowany kod, którego nie da się przechwycić i użyć ponownie.</p>
+                    <div id="encrypted-text" class="encrypted-text-animation"></div>
+                </div>
+            </section>
+            <div class="gate-overlay-animation">
+                <div class="gate-half left"></div>
+                <div class="gate-half right"></div>
+            </div>
+        </div>
+    </div>
+
+    <section class="scene background-scene nfc-bg">
+        <div class="content-wrapper">
+            <h3>Dodaj pilota jednym dotknięciem</h3>
+            <p>Zapomnij o skomplikowanych instrukcjach. Dzięki technologii NFC, takiej jak w płatnościach zbliżeniowych, aby dodać nowy pilot, wystarczy zbliżyć go do sterownika. Parowanie jest błyskawiczne, proste i absolutnie bezpieczne.</p>
+        </div>
+    </section>
+    
+    <section class="scene background-scene app-bg">
+        <div class="content-wrapper">
+            <h3>Pełna kontrola w Twoim telefonie</h3>
+            <p>Nasz sterownik to centrum dowodzenia w Twojej kieszeni. Otwieraj bramę z dowolnego miejsca na świecie dla kuriera lub gości.</p>
+        </div>
+    </section>
+    
+    <section class="scene background-scene lost-pilot-bg">
+        <div class="content-wrapper">
+            <h3>Zgubiony pilot? Żaden problem</h3>
+            <p>Tradycyjnie zgubiony pilot oznaczał kosztowną wizytę serwisu. Teraz, za pomocą bezpiecznej aplikacji w telefonie, możesz go usunąć w kilka sekund.</p>
+        </div>
+    </section>
+    
+    <section class="scene background-scene auto-open-bg">
+        <div class="content-wrapper">
+            <h3>Brama, która Cię rozpoznaje.</h3>
+            <p>Włącz w aplikacji funkcję automatycznego otwierania. Dzięki niej, sterownik wykryje, że wjeżdżasz na podjazd i brama otworzy się sama.</p>
+        </div>
+    </section>
+    
+    <section class="scene background-scene installers-bg">
+        <div class="content-wrapper">
+            <h3>Dla Profesjonalistów i Instalatorów</h3>
+            <p>Wyróżnij swoją ofertę i zaoferuj klientom produkt, który naprawdę chroni ich dom. Nasz system to niezawodność, prosta instalacja i bezpieczeństwo klasy premium, które buduje zaufanie i satysfakcję na lata.</p>
+        </div>
+    </section>
+    
+    <section class="scene background-scene peace-of-mind-bg">
+        <div class="content-wrapper">
+            <h2>To nie jest kolejny gadżet. To inwestycja w spokój.</h2>
+            <p>Zabezpiecz to, co najważniejsze, w sposób, na jaki zasługujesz – inteligentnie, nowocześnie i bezkompromisowo.</p>
+        </div>
+    </section>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+        
+        // --- ZŁOŻONA ANIMACJA HERO ---
+        const heroTl = gsap.timeline({
+            scrollTrigger: {
+                trigger: '.hero-container',
+                pin: '.hero-sticky-content',
+                scrub: 1,
+                start: 'top top',
+                end: 'bottom top'
+            }
+        });
+
+        // Etap 1: Znika treść powitalna
+        heroTl.to('.intro-content', { opacity: 0, scale: 0.9, duration: 0.5 }, 0)
+              .to('.hero-background-layer', { opacity: 1, duration: 0.5 }, 0)
+              .to('#interactive-background', { opacity: 0, duration: 0.5 }, 0)
+        
+        // Etap 2: Pojawia się nowa treść
+              .to('.reveal-content', { opacity: 1, scale: 1, duration: 0.5 }, 0.25)
+
+        // Etap 3: ZNIKA nowa treść, aby zrobić miejsce dla reszty strony
+              .to('.reveal-content', { opacity: 0, scale: 0.9, duration: 0.25 }, 0.75);
+
+
+        // --- POZOSTAŁE ANIMACJE ---
+        
+        // Animacja Bramy
+        gsap.timeline({
+            scrollTrigger: {
+                trigger: "#gate-wrapper",
+                scrub: 1,
+                pin: ".gate-pin-target",
+                start: "top top",
+                end: "bottom top"
+            }
+        }).to(".gate-half.left", { x: "-50.5vw" }, "gate_open").to(".gate-half.right", { x: "50.5vw" }, "gate_open");
+
+        // Animacja tekstu szyfrowania
+        const encryptedTextBox = document.getElementById('encrypted-text');
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
+        let encryptionInterval;
+        function generateEncryptedText() {
+            let result = '';
+            const length = Math.floor(Math.random() * 50) + 50;
+            for (let i = 0; i < length; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            encryptedTextBox.textContent = result;
+        }
+        ScrollTrigger.create({
+            trigger: ".security-bg",
+            onEnter: () => { if (!encryptionInterval) { encryptionInterval = setInterval(generateEncryptedText, 150); } },
+            onLeave: () => { clearInterval(encryptionInterval); encryptionInterval = null; },
+            onEnterBack: () => { if (!encryptionInterval) { encryptionInterval = setInterval(generateEncryptedText, 150); } },
+            onLeaveBack: () => { clearInterval(encryptionInterval); encryptionInterval = null; }
+        });
+
+        // Animacje teł i treści dla pozostałych sekcji
+        gsap.utils.toArray('.background-scene').forEach(scene => {
+            if (scene.classList.contains('security-bg')) {
+                gsap.timeline({ scrollTrigger: { trigger: '#gate-wrapper', start: 'top 80%', end: 'top 30%', scrub: 1 } }).to(scene, { '--bg-opacity': 1, ease: 'none' });
+                gsap.timeline({ scrollTrigger: { trigger: '#gate-wrapper', start: 'bottom 70%', end: 'bottom 20%', scrub: 1 } }).to(scene, { '--bg-opacity': 0, ease: 'none' });
+            } else {
+                gsap.timeline({ scrollTrigger: { trigger: scene, start: 'top 80%', end: 'top 30%', scrub: 1 } }).to(scene, { '--bg-opacity': 1, ease: 'none' });
+                gsap.timeline({ scrollTrigger: { trigger: scene, start: 'bottom 70%', end: 'bottom 20%', scrub: 1 } }).to(scene, { '--bg-opacity': 0, ease: 'none' });
+            }
+
+            const content = scene.querySelector('.content-wrapper');
+            if (content && !scene.classList.contains('security-bg')) {
+                if (!content.closest('.reveal-content')) {
+                    gsap.from(content, {
+                        y: 50,
+                        opacity: 0,
+                        scale: 0.98,
+                        duration: 0.8,
+                        ease: 'power2.out',
+                        scrollTrigger: {
+                            trigger: scene,
+                            start: 'top 85%',
+                            toggleActions: 'play none none reverse'
+                        }
+                    });
+                }
+            }
+        });
+        
+        // --- ANIMACJA TŁA "SIEĆ" ---
+        const canvas = document.getElementById('interactive-background');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        let particlesArray;
+        const mouse = { x: null, y: null, radius: (canvas.height/120) * (canvas.width/120) };
+        window.addEventListener('mousemove', (event) => { mouse.x = event.x; mouse.y = event.y; });
+        class Particle {
+            constructor(x, y, dX, dY, size) { this.x = x; this.y = y; this.directionX = dX; this.directionY = dY; this.size = size; }
+            draw() {
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+                ctx.fillStyle = 'rgba(0, 122, 255, 0.5)'; ctx.fill();
+            }
+            update() {
+                if (this.x > canvas.width || this.x < 0) { this.directionX = -this.directionX; }
+                if (this.y > canvas.height || this.y < 0) { this.directionY = -this.directionY; }
+                let dx = mouse.x - this.x; let dy = mouse.y - this.y;
+                let distance = Math.sqrt(dx*dx + dy*dy);
+                if (distance < mouse.radius + this.size) {
+                    if (mouse.x < this.x && this.x < canvas.width - this.size * 10) { this.x += 3; }
+                    if (mouse.x > this.x && this.x > this.size * 10) { this.x -= 3; }
+                    if (mouse.y < this.y && this.y < canvas.height - this.size * 10) { this.y += 3; }
+                    if (mouse.y > this.y && this.y > this.size * 10) { this.y -= 3; }
+                }
+                this.x += this.directionX; this.y += this.directionY;
+                this.draw();
+            }
+        }
+        function init() {
+            particlesArray = [];
+            let numberOfParticles = (canvas.height * canvas.width) / 8000;
+            for (let i = 0; i < numberOfParticles; i++) {
+                let size = (Math.random() * 2) + 1;
+                let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
+                let y = (Math.random() * ((innerHeight - size * 2) - (size * 2)) + size * 2);
+                let directionX = (Math.random() * 0.4) - 0.2;
+                let directionY = (Math.random() * 0.4) - 0.2;
+                particlesArray.push(new Particle(x, y, directionX, directionY, size));
+            }
+        }
+        function connect() {
+            let opacityValue = 1;
+            const connectionDistance = 120;
+            for (let a = 0; a < particlesArray.length; a++) {
+                for (let b = a; b < particlesArray.length; b++) {
+                    let distance = ((particlesArray[a].x - particlesArray[b].x) * (particlesArray[a].x - particlesArray[b].x)) + ((particlesArray[a].y - particlesArray[b].y) * (particlesArray[a].y - particlesArray[b].y));
+                    if (distance < (connectionDistance * connectionDistance)) {
+                        opacityValue = 1 - (distance / (connectionDistance * connectionDistance));
+                        ctx.strokeStyle = 'rgba(0, 122, 255, ' + opacityValue + ')';
+                        ctx.lineWidth = 1;
+                        ctx.beginPath(); ctx.moveTo(particlesArray[a].x, particlesArray[a].y); ctx.lineTo(particlesArray[b].x, particlesArray[b].y); ctx.stroke();
+                    }
+                }
+            }
+        }
+        function animate() {
+            requestAnimationFrame(animate);
+            ctx.clearRect(0,0,innerWidth, innerHeight);
+            for(let i = 0; i < particlesArray.length; i++) { particlesArray[i].update(); }
+            connect();
+        }
+        window.addEventListener('resize', () => { canvas.width = innerWidth; canvas.height = innerHeight; mouse.radius = (canvas.height/120) * (canvas.width/120); init(); });
+        window.addEventListener('mouseout', () => { mouse.x = undefined; mouse.y = undefined; });
+        init();
+        animate();
+    </script>
+</body>
+</html>
